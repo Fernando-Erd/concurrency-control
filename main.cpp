@@ -12,10 +12,8 @@ typedef struct {
 
 void readInput (vector<transition> *transitionList) {
     transition t;
-    scanf("%d %d %c %c", &t.time, &t.id, &t.operation, &t.atribute);
-    while (t.time != 0) {
+       while (scanf("%d %d %c %c", &t.time, &t.id, &t.operation, &t.atribute) != EOF) {
         transitionList->push_back(t);
-        scanf("%d %d %c %c", &t.time, &t.id, &t.operation, &t.atribute);
     }
 }
 
