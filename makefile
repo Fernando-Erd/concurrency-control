@@ -1,6 +1,6 @@
 CFLAGS = -g -Wall
 
-all: l
+all: escalona
 
 clean:
 	rm -f all
