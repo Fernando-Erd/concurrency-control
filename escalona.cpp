@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <vector>
 #include <map>
-
+#include <algorithm>
+#include <iostream>
 using namespace std;
 
 typedef vector<int> vi;
@@ -110,6 +111,28 @@ void printGraph (mn &graph) {
     }
 }
 
+int fatorial (int n) {
+    if ((n==1) || (n==0)) return 1;               
+    else return fatorial(n-1)*n;
+}
+
+void visao(vector<t_operation> &transitionList, vector<int> &active) {
+    map<int,vector<t_operation> > map_transitions;
+    vector <int>::iterator it;
+    //generate map
+    for (int i= 0; i <(int) transitionList.size(); i++) {
+        it = find (active.begin(), active.end(), transitionList[i].id);
+        if (it != active.end() && transitionList[i].operation != 'C')
+            printf ("%d ", transitionList[i].id);
+            map_transitions[transitionList[i].id] = transitionList;
+    }
+    //brute force
+    for (int i=0; i < fatorial(transitionList.size()); i++) {
+      
+    }
+}
+
+
 int main () {
     int nschedule;
 	vector <t_operation> transitionList;
@@ -118,6 +141,7 @@ int main () {
     readInput(&transitionList);
     //printInput(transitionList);
 	nschedule = generateGraph(transitionList,graph);
+        printf("%d\n", nschedule);
 	//printGraph(graph);
 	for(int i=1;i<=nschedule;i++){
 		int answer = 1;
@@ -130,6 +154,7 @@ int main () {
 				transaction_list.push_back(it->first);
 			}
 		}
+                visao(transitionList, transaction_list);
 		for(int j=0;j<(int) transaction_list.size()-1;j++){
 			printf("%d,",transaction_list[j]);
 		}
