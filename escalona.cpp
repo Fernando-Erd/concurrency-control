@@ -111,21 +111,77 @@ void printGraph (mn &graph) {
     }
 }
 
-void visao(vector<t_operation> &transitionList, vector<int> &active) {
+//transicoes q leram o valor inicial
+int case1(vector<char> &atributes_list, vector<t_operation> &transitionList, vector<int> &active, map<int,vector<t_operation> > &map_transitions) {
+    vector <int>::iterator it;
+    vector <int>transitions_read;
+    vector <t_operation>serial;
+    for (int i =0; i <(int) atributes_list.size(); i++) {
+        //procura transicoes q le variavel inicial
+        for (int j= 0; j <(int) transitionList.size(); j++) {
+            it = find (active.begin(), active.end(), transitionList[j].id);
+            if (it != active.end() && transitionList[j].atribute == atributes_list[i]) {
+                if (transitionList[j].operation == 'R') {
+                    transitions_read.push_back(transitionList[j].id);
+                }
+                else if (transitionList[j].operation == 'W') {
+                    break;
+                }
+            }
+        }
+        //printf ("Transicoes q leram inicial %c: ", atributes_list[i]);
+        //for (int j=0;j<(int)transitions_read.size(); j++)
+        //    printf ("%d", transitions_read[j]);
+        //printf("\n");
+        //checa no map
+        for (int j=0;j<(int)active.size(); j++) {
+            serial = map_transitions[active[j]];
+            for (int k=0; k<(int)serial.size(); k++) {
+                printf("%d %d %c %c\n", serial[k].time, serial[k].id, serial[k].operation, serial[k].atribute);
+                if (serial[k].operation == 'W' && serial[k].atribute == atributes_list[i]) {
+                    printf("%d escreveu %c\n", serial[k].id, atributes_list[i]);
+                    if ((int)transitions_read.size() > 1) return 0;
+                }
+            }
+        }
+        
+        transitions_read.clear();
+        printf("\n");
+    }
+    return 1;
+
+}
+
+void vision(vector<t_operation> &transitionList, vector<int> &active) {
     map<int,vector<t_operation> > map_transitions;
     vector <int>::iterator it;
+    vector <char>::iterator it_char;
+    vector <char> atributes_list;
+    vector <int>read_init_value; //transicoes q leram valor inicial, caso 1
+    int value_init = 0;
     //generate map
     for (int i= 0; i <(int) transitionList.size(); i++) {
         it = find (active.begin(), active.end(), transitionList[i].id);
-        if (it != active.end() && transitionList[i].operation != 'C')
-            map_transitions[transitionList[i].id] = transitionList;
+        if (it != active.end() && transitionList[i].operation != 'C') {
+            map_transitions[transitionList[i].id].push_back(transitionList[i]);
+            it_char = find (atributes_list.begin(), atributes_list.end(), transitionList[i].atribute);
+            if (it_char == atributes_list.end() && transitionList[i].operation != 'C')
+                atributes_list.push_back(transitionList[i].atribute);
+        }
     }
+
+    printf ("\nVariaveis: ");
+    for (int i=0;i<(int)atributes_list.size(); i++)
+        printf ("%c ", atributes_list[i]);
     //generate permute and brute force
-    sort(active.begin(), active.end());
-    printf("\nPermutation\n");
-    do { 
-        printf("%d %d\n", active[0], active[1]);
-    } while (next_permutation(active.begin(),active.end())); 
+    printf("\n");
+    //sort(active.begin(), active.end());
+    //do {
+    //    printf("Permutação: %d %d\n", active[0], active[1]);
+        if(case1(atributes_list, transitionList, active, map_transitions) == 1) printf("Caso de Leitura Inicial é serializavel\n");
+        else printf("Caso de Leitura Inicial não é serializavel\n");
+        
+    //} while (next_permutation(active.begin(),active.end())); 
 }
 
 int main () {
@@ -136,7 +192,6 @@ int main () {
     readInput(&transitionList);
     //printInput(transitionList);
 	nschedule = generateGraph(transitionList,graph);
-        printf("%d\n", nschedule);
 	//printGraph(graph);
 	for(int i=1;i<=nschedule;i++){
 		int answer = 1;
@@ -149,7 +204,7 @@ int main () {
 				transaction_list.push_back(it->first);
 			}
 		}
-                visao(transitionList, transaction_list);
+                vision(transitionList, transaction_list);
 		for(int j=0;j<(int) transaction_list.size()-1;j++){
 			printf("%d,",transaction_list[j]);
 		}
