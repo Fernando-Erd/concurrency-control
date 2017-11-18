@@ -111,11 +111,6 @@ void printGraph (mn &graph) {
     }
 }
 
-int fatorial (int n) {
-    if ((n==1) || (n==0)) return 1;               
-    else return fatorial(n-1)*n;
-}
-
 void visao(vector<t_operation> &transitionList, vector<int> &active) {
     map<int,vector<t_operation> > map_transitions;
     vector <int>::iterator it;
@@ -123,15 +118,15 @@ void visao(vector<t_operation> &transitionList, vector<int> &active) {
     for (int i= 0; i <(int) transitionList.size(); i++) {
         it = find (active.begin(), active.end(), transitionList[i].id);
         if (it != active.end() && transitionList[i].operation != 'C')
-            printf ("%d ", transitionList[i].id);
             map_transitions[transitionList[i].id] = transitionList;
     }
-    //brute force
-    for (int i=0; i < fatorial(transitionList.size()); i++) {
-      
-    }
+    //generate permute and brute force
+    sort(active.begin(), active.end());
+    printf("\nPermutation\n");
+    do { 
+        printf("%d %d\n", active[0], active[1]);
+    } while (next_permutation(active.begin(),active.end())); 
 }
-
 
 int main () {
     int nschedule;
