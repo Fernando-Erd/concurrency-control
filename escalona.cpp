@@ -139,14 +139,14 @@ int case1(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
             for (int k=0; k<(int)serial.size(); k++) {
                 printf("%d %d %c %c\n", serial[k].time, serial[k].id, serial[k].operation, serial[k].atribute);
                 if (serial[k].operation == 'W' && serial[k].atribute == atributes_list[i]) {
-                    printf("%d escreveu %c\n", serial[k].id, atributes_list[i]);
+                    //printf("%d escreveu %c\n", serial[k].id, atributes_list[i]);
                     if ((int)transitions_read.size() > 1) return 0;
                 }
             }
         }
         
         transitions_read.clear();
-        printf("\n");
+        //printf("\n");
     }
     return 1;
 
@@ -175,13 +175,16 @@ void vision(vector<t_operation> &transitionList, vector<int> &active) {
         printf ("%c ", atributes_list[i]);
     //generate permute and brute force
     printf("\n");
-    //sort(active.begin(), active.end());
-    //do {
-    //    printf("Permutação: %d %d\n", active[0], active[1]);
+    sort(active.begin(), active.begin() + active.size());
+    do {
+        printf("Permutação: ");
+        for (int i=0;i<(int)active.size(); i++)
+            printf ("%d ", active[i]);
+        printf("\n");
         if(case1(atributes_list, transitionList, active, map_transitions) == 1) printf("Caso de Leitura Inicial é serializavel\n");
         else printf("Caso de Leitura Inicial não é serializavel\n");
         
-    //} while (next_permutation(active.begin(),active.end())); 
+    } while (next_permutation(active.begin(),active.begin() + active.size())); 
 }
 
 int main () {
