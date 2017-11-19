@@ -31,10 +31,10 @@ typedef struct {
 
 int generateGraph(vector<t_operation> &transactionList,mn &graph){
     //first pass
-	int nschedule = 0,atime,ntransition = 0;
+	int nschedule = 0,atime,ntransaction = 0;
 	char aop;
 	for (int i = 0; i < (int) transactionList.size(); i++) {
-		if(ntransition == 0){
+		if(ntransaction == 0){
 			nschedule++;
 		}
 		if(graph.find(transactionList[i].id) == graph.end()){
@@ -42,10 +42,10 @@ int generateGraph(vector<t_operation> &transactionList,mn &graph){
 			node.color = 0;
 			node.schedule = nschedule;
 			graph[transactionList[i].id] = node;
-			ntransition++;
+			ntransaction++;
 		}
 		if(transactionList[i].operation == 'C'){
-			ntransition--;
+			ntransaction--;
 		}
 	}
 
