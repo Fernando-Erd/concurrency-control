@@ -161,7 +161,7 @@ int case2(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
     int write_atribute = 0;
     for (int i =0; i <(int) atributes_list.size(); i++) {
         //procura os time q depedende de um valor escrito por outro transicao
-        printf ("VARIAVEL AGR: %c\n", atributes_list[i]);
+        //printf ("VARIAVEL AGR: %c\n", atributes_list[i]);
         for (int j= 0; j <(int) transitionList.size(); j++) {
             it = find (active.begin(), active.end(), transitionList[j].id);
             if (it != active.end() && transitionList[j].atribute == atributes_list[i]) {
@@ -171,8 +171,8 @@ int case2(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
                 if (transitionList[j].operation == 'W' && write_atribute == 0) {
                     write_atribute = 1;
                     write_time = transitionList[j].time;
-                    printf("time: %d\n", transitionList[j].time);
-                    printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
+                    //printf("time: %d\n", transitionList[j].time);
+                    //printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
                 }
                 if (transitionList[j].operation == 'R' && write_atribute == 1) {
                     depedency_time[write_time].push_back(transitionList[j].time);
@@ -180,15 +180,15 @@ int case2(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
             }
         }
         write_atribute = 0;
+        //for(map<int, vector <int> >::const_iterator it_map = depedency_time.begin(); it_map != depedency_time.end(); it_map++) {
+        //    int key = it_map->first;
+        //    vector<int> dep = it_map->second;
+            //printf ("key: %d - leitura depedentes ", key);
+            //for (int j=0; j < (int)dep.size(); j++) printf ("%d ", dep[j]);
+            //printf("\n");
+        //}
         for(map<int, vector <int> >::const_iterator it_map = depedency_time.begin(); it_map != depedency_time.end(); it_map++) {
-            int key = it_map->first;
-            vector<int> dep = it_map->second;
-            printf ("key: %d - leitura depedentes ", key);
-            for (int j=0; j < (int)dep.size(); j++) printf ("%d ", dep[j]);
-            printf("\n");
-        }
-        for(map<int, vector <int> >::const_iterator it_map = depedency_time.begin(); it_map != depedency_time.end(); it_map++) {
-            printf ("Procurando depedentes de %d\n", it_map->first);
+            //printf ("Procurando depedentes de %d\n", it_map->first);
             for (int j=0; j < (int)it_map->second.size(); j++) { //lop vector de depedentes
                 for (int k=0;k<(int)active.size(); k++) { //loop de transacoes id
                 int exit_loop = 0;
@@ -199,7 +199,7 @@ int case2(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
                             break;
                         }
                         if (serial[l].time == it_map->second[j]) {
-                            printf("ACHEI DEPEDENCIA %d %d %c %c\n", serial[l].time, serial[l].id, serial[l].operation, serial[l].atribute);
+                            //printf("ACHEI DEPEDENCIA %d %d %c %c\n", serial[l].time, serial[l].id, serial[l].operation, serial[l].atribute);
                             return 0; 
                         }
                     }
@@ -226,18 +226,18 @@ int case3(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
             if (it != active.end() && transitionList[j].atribute == atributes_list[i]) {
                 if (transitionList[j].operation == 'W') {
                     transition_id_last_write = transitionList[j].id;
-                    printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
+                    //printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
                 }
             }
         }
         //verifica a permutacao no map
-        printf("%d: Ultimo q escreveu inicialmente %c\n",transition_id_last_write, atributes_list[i]);
+        //printf("%d: Ultimo q escreveu inicialmente %c\n",transition_id_last_write, atributes_list[i]);
         if (transition_id_last_write != 0) {
             for (int j= (int)active.size() - 1;j >= 0 ; j--) {
                 serial = map_transitions[active[j]];
                 for (int k=(int)serial.size() - 1; k >= 0; k--) {
                     if(serial[k].operation == 'W' && serial[k].atribute == atributes_list[i] && transition_id_last_write_serial == 0) {
-                        printf("%d: ultimo q escreveu agr %c\n",serial[k].id, atributes_list[i]);
+                        //printf("%d: ultimo q escreveu agr %c\n",serial[k].id, atributes_list[i]);
                         transition_id_last_write_serial = serial[k].id;
                         if (transition_id_last_write != serial[k].id) return 0; //falha
                     }
@@ -248,7 +248,7 @@ int case3(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
     return 1;        
 }
 
-void vision(vector<t_operation> &transitionList, vector<int> &active) {
+int vision(vector<t_operation> &transitionList, vector<int> &active) {
     map<int,vector<t_operation> > map_transitions;
     vector <int>::iterator it;
     vector <char>::iterator it_char;
@@ -266,20 +266,21 @@ void vision(vector<t_operation> &transitionList, vector<int> &active) {
         }
     }
 
-    printf ("\nVariaveis: ");
-    for (int i=0;i<(int)atributes_list.size(); i++)
-        printf ("%c ", atributes_list[i]);
+    //printf ("\nVariaveis: ");
+    //for (int i=0;i<(int)atributes_list.size(); i++)
+    //    printf ("%c ", atributes_list[i]);
     //generate permute and brute force
-    printf("\n");
+    //printf("\n");
     sort(active.begin(), active.begin() + active.size());
     do {
-        printf("Permutação: ");
-        for (int i=0;i<(int)active.size(); i++)
-            printf ("%d ", active[i]);
-        printf("\n");
-        if(case1(atributes_list, transitionList, active, map_transitions) == 1 && case2(atributes_list, transitionList, active, map_transitions) == 1 &&case3(atributes_list, transitionList, active, map_transitions)) printf ("É serializavel \n");
+        //printf("Permutação: ");
+        //for (int i=0;i<(int)active.size(); i++)
+        //    printf ("%d ", active[i]);
+        //printf("\n");
+        if(case1(atributes_list, transitionList, active, map_transitions) == 1 && case2(atributes_list, transitionList, active, map_transitions) == 1 &&case3(atributes_list, transitionList, active, map_transitions)) return 1;
 
     } while (next_permutation(active.begin(),active.begin() + active.size())); 
+    return 0;
 }
 
 int main () {
@@ -302,13 +303,14 @@ int main () {
 				transaction_list.push_back(it->first);
 			}
 		}
-                vision(transitionList, transaction_list);
 		for(int j=0;j<(int) transaction_list.size()-1;j++){
 			printf("%d,",transaction_list[j]);
 		}
 		if((int) transaction_list.size()) printf("%d ",transaction_list[transaction_list.size()-1]);
 		if(answer) printf("SS ");
 		else printf("NS ");
+                if (vision(transitionList, transaction_list)) printf("SV");
+                else printf("NV");
 		transaction_list.clear();
 		printf("\n");
 	}
