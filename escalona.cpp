@@ -137,7 +137,7 @@ int case1(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
         for (int j=0;j<(int)active.size(); j++) {
             serial = map_transitions[active[j]];
             for (int k=0; k<(int)serial.size(); k++) {
-                printf("%d %d %c %c\n", serial[k].time, serial[k].id, serial[k].operation, serial[k].atribute);
+                //printf("%d %d %c %c\n", serial[k].time, serial[k].id, serial[k].operation, serial[k].atribute);
                 if (serial[k].operation == 'W' && serial[k].atribute == atributes_list[i]) {
                     //printf("%d escreveu %c\n", serial[k].id, atributes_list[i]);
                     if ((int)transitions_read.size() > 1) return 0;
@@ -150,6 +150,41 @@ int case1(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
     }
     return 1;
 
+}
+//tenho q ser o ultimo q escreveu a variavel em todos os planos
+int case3(vector<char> &atributes_list, vector<t_operation> &transitionList, vector<int> &active, map<int,vector<t_operation> > &map_transitions) {
+    vector <int>::iterator it;
+    int transition_id_last_write;
+    int transition_id_last_write_serial = 0;
+    vector <t_operation>serial;
+
+    for (int i =0; i <(int) atributes_list.size(); i++) {
+        //procura o ultimo id q escreveu a variavel
+        for (int j= 0; j <(int) transitionList.size(); j++) {
+            it = find (active.begin(), active.end(), transitionList[j].id);
+            if (it != active.end() && transitionList[j].atribute == atributes_list[i]) {
+                if (transitionList[j].operation == 'W') {
+                    transition_id_last_write = transitionList[j].id;
+                    printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
+                }
+            }
+        }
+        //verifica a permutacao no map
+        printf("%d: Ultimo q escreveu inicialmente %c\n",transition_id_last_write, atributes_list[i]);
+        if (transition_id_last_write != 0) {
+            for (int j= (int)active.size() - 1;j >= 0 ; j--) {
+                serial = map_transitions[active[j]];
+                for (int k=(int)serial.size() - 1; k >= 0; k--) {
+                    if(serial[k].operation == 'W' && serial[k].atribute == atributes_list[i] && transition_id_last_write_serial == 0) {
+                        printf("%d: ultimo q escreveu agr %c\n",serial[k].id, atributes_list[i]);
+                        transition_id_last_write_serial = serial[k].id;
+                        if (transition_id_last_write != serial[k].id) return 0; //falha
+                    }
+                }   
+            }
+         }
+    }
+    return 1;        
 }
 
 void vision(vector<t_operation> &transitionList, vector<int> &active) {
@@ -181,9 +216,10 @@ void vision(vector<t_operation> &transitionList, vector<int> &active) {
         for (int i=0;i<(int)active.size(); i++)
             printf ("%d ", active[i]);
         printf("\n");
-        if(case1(atributes_list, transitionList, active, map_transitions) == 1) printf("Caso de Leitura Inicial é serializavel\n");
+        //if(case1(atributes_list, transitionList, active, map_transitions) == 1 && case3(atributes_list, transitionList, active, map_transitions)) 
+        if(case3(atributes_list, transitionList, active, map_transitions) == 1)    printf("Caso de Leitura Inicial é serializavel\n");
         else printf("Caso de Leitura Inicial não é serializavel\n");
-        
+
     } while (next_permutation(active.begin(),active.begin() + active.size())); 
 }
 
