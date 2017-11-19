@@ -151,6 +151,67 @@ int case1(vector<char> &atributes_list, vector<t_operation> &transitionList, vec
     return 1;
 
 }
+
+//leio um valor q foi modificado em outra transicao
+int case2(vector<char> &atributes_list, vector<t_operation> &transitionList, vector<int> &active, map<int,vector<t_operation> > &map_transitions) {
+    vector <int>::iterator it;
+    vector <t_operation>serial;
+    int write_time, read_time;
+    map <int,vector <int> >depedency_time;
+    int write_atribute = 0;
+    for (int i =0; i <(int) atributes_list.size(); i++) {
+        //procura os time q depedende de um valor escrito por outro transicao
+        printf ("VARIAVEL AGR: %c\n", atributes_list[i]);
+        for (int j= 0; j <(int) transitionList.size(); j++) {
+            it = find (active.begin(), active.end(), transitionList[j].id);
+            if (it != active.end() && transitionList[j].atribute == atributes_list[i]) {
+                if (transitionList[j].operation == 'W' && write_atribute == 1) {
+                    write_atribute = 0;
+                }
+                if (transitionList[j].operation == 'W' && write_atribute == 0) {
+                    write_atribute = 1;
+                    write_time = transitionList[j].time;
+                    printf("time: %d\n", transitionList[j].time);
+                    printf("%d %d %c %c\n", transitionList[j].time, transitionList[j].id, transitionList[j].operation, transitionList[j].atribute);
+                }
+                if (transitionList[j].operation == 'R' && write_atribute == 1) {
+                    depedency_time[write_time].push_back(transitionList[j].time);
+                } 
+            }
+        }
+        write_atribute = 0;
+        for(map<int, vector <int> >::const_iterator it_map = depedency_time.begin(); it_map != depedency_time.end(); it_map++) {
+            int key = it_map->first;
+            vector<int> dep = it_map->second;
+            printf ("key: %d - leitura depedentes ", key);
+            for (int j=0; j < (int)dep.size(); j++) printf ("%d ", dep[j]);
+            printf("\n");
+        }
+        for(map<int, vector <int> >::const_iterator it_map = depedency_time.begin(); it_map != depedency_time.end(); it_map++) {
+            printf ("Procurando depedentes de %d\n", it_map->first);
+            for (int j=0; j < (int)it_map->second.size(); j++) { //lop vector de depedentes
+                for (int k=0;k<(int)active.size(); k++) { //loop de transacoes id
+                int exit_loop = 0;
+                serial = map_transitions[active[k]]; 
+                    for (int l=0; l<(int)serial.size(); l++) { //lopp de transicoes operatoin
+                        if (serial[l].time == it_map->first) { //se achei a transicao chave do map e n achei nenhum depedente acima tá ok
+                            exit_loop = 1;
+                            break;
+                        }
+                        if (serial[l].time == it_map->second[j]) {
+                            printf("ACHEI DEPEDENCIA %d %d %c %c\n", serial[l].time, serial[l].id, serial[l].operation, serial[l].atribute);
+                            return 0; 
+                        }
+                    }
+                    if (exit_loop == 1) break;
+                }
+            }
+        }
+        depedency_time.clear();
+    }
+    return 1;
+}
+
 //tenho q ser o ultimo q escreveu a variavel em todos os planos
 int case3(vector<char> &atributes_list, vector<t_operation> &transitionList, vector<int> &active, map<int,vector<t_operation> > &map_transitions) {
     vector <int>::iterator it;
@@ -216,9 +277,7 @@ void vision(vector<t_operation> &transitionList, vector<int> &active) {
         for (int i=0;i<(int)active.size(); i++)
             printf ("%d ", active[i]);
         printf("\n");
-        //if(case1(atributes_list, transitionList, active, map_transitions) == 1 && case3(atributes_list, transitionList, active, map_transitions)) 
-        if(case3(atributes_list, transitionList, active, map_transitions) == 1)    printf("Caso de Leitura Inicial é serializavel\n");
-        else printf("Caso de Leitura Inicial não é serializavel\n");
+        if(case1(atributes_list, transitionList, active, map_transitions) == 1 && case2(atributes_list, transitionList, active, map_transitions) == 1 &&case3(atributes_list, transitionList, active, map_transitions)) printf ("É serializavel \n");
 
     } while (next_permutation(active.begin(),active.begin() + active.size())); 
 }
