@@ -242,33 +242,32 @@ int vision(vector<t_operation> &transactionList, vector<int> &active) {
 }
 
 int main () {
-		int nschedule;
-		vector <t_operation> transactionList;
-		vector <int> transaction_list;
-		mn graph;
+    int nschedule;
+    vector <t_operation> transactionList;
+    vector <int> transaction_list;
+    mn graph;
     readInput(&transactionList);
-
-		nschedule = generateGraph(transactionList,graph);
-		for(int i=1;i<=nschedule;i++){
-				int answer = 1;
-				printf("%d ",i);
-				for(mn::iterator it = graph.begin(); it != graph.end(); ++it){
-						if(it->second.schedule == i){
-								if(answer && (it->second.color == 0)){
-										answer = dfs(graph,it->first);
-								}
-								transaction_list.push_back(it->first);
-						}
-				}
-				for(int j=0;j<(int) transaction_list.size()-1;j++){
-						printf("%d,",transaction_list[j]);
-				}
-				if((int) transaction_list.size()) printf("%d ",transaction_list[transaction_list.size()-1]);
-				if(answer) printf("SS ");
-				else printf("NS ");
+    nschedule = generateGraph(transactionList,graph);
+    for(int i=1;i<=nschedule;i++){
+        int answer = 1;
+	printf("%d ",i);
+	for(mn::iterator it = graph.begin(); it != graph.end(); ++it){
+	    if(it->second.schedule == i){
+	        if(answer && (it->second.color == 0)){
+		    answer = dfs(graph,it->first);
+		}
+		transaction_list.push_back(it->first);
+	    }
+	}
+	for(int j=0;j<(int) transaction_list.size()-1;j++){
+	    printf("%d,",transaction_list[j]);
+	}
+	if((int) transaction_list.size()) printf("%d ",transaction_list[transaction_list.size()-1]);
+	if(answer) printf("SS ");
+	else printf("NS ");
         if (vision(transactionList, transaction_list)) printf("SV");
         else printf("NV");
-				transaction_list.clear();
-				printf("\n");
-	}
+	transaction_list.clear();
+	printf("\n");
+    }
 }
